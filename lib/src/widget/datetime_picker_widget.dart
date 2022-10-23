@@ -50,7 +50,7 @@ class DateTimePickerWidget extends StatefulWidget {
 }
 
 class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
-  DateTime _minTime, _maxTime;
+  DateTime? _minTime, _maxTime;
   int? _currDay, _currHour, _currMinute, _currSecond;
   int? _minuteDivider;
   List<int>? _dayRange, _hourRange, _minuteRange, _secondRange;
@@ -118,8 +118,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     // create scroll controller
     _dayScrollCtrl =
         FixedExtentScrollController(initialItem: _currDay! - _dayRange!.first);
-    _hourScrollCtrl =
-        FixedExtentScrollController(initialItem: _currHour! - _hourRange!.first);
+    _hourScrollCtrl = FixedExtentScrollController(
+        initialItem: _currHour! - _hourRange!.first);
     _minuteScrollCtrl = FixedExtentScrollController(
         initialItem: (_currMinute! - _minuteRange!.first) ~/ _minuteDivider!);
     _secondScrollCtrl = FixedExtentScrollController(
@@ -211,7 +211,7 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
 
   /// render the picker widget of year、month and day
   Widget _renderDatePickerWidget() {
-    List<Widget> pickers = List<Widget>();
+    List<Widget> pickers = List<Widget>.empty();
     List<String> formatArr = DateTimeFormatter.splitDateFormat(
         widget.dateFormat,
         mode: DateTimePickerMode.datetime);
@@ -319,8 +319,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
       alignment: Alignment.center,
       child: Text(
         DateTimeFormatter.formatDate(dateTime, format, widget.locale),
-        style:
-            widget.pickerTheme!.itemTextStyle ?? DATETIME_PICKER_ITEM_TEXT_STYLE,
+        style: widget.pickerTheme?.itemTextStyle ??
+            DATETIME_PICKER_ITEM_TEXT_STYLE,
       ),
     );
   }
@@ -332,8 +332,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
       alignment: Alignment.center,
       child: Text(
         DateTimeFormatter.formatDateTime(value, format, widget.locale),
-        style:
-            widget.pickerTheme!.itemTextStyle ?? DATETIME_PICKER_ITEM_TEXT_STYLE,
+        style: widget.pickerTheme?.itemTextStyle ??
+            DATETIME_PICKER_ITEM_TEXT_STYLE,
       ),
     );
   }
@@ -432,8 +432,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     if (minuteRangeChanged) {
       // CupertinoPicker refresh data not working (https://github.com/flutter/flutter/issues/22999)
       int currMinute = _currMinute!;
-      _minuteScrollCtrl!
-          .jumpToItem((minuteRange.last - minuteRange.first) ~/ _minuteDivider!);
+      _minuteScrollCtrl!.jumpToItem(
+          (minuteRange.last - minuteRange.first) ~/ _minuteDivider!);
       if (currMinute < minuteRange.last) {
         _minuteScrollCtrl!.jumpToItem(currMinute - minuteRange.first);
       }
@@ -461,8 +461,8 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
 
   /// calculate the range of day
   List<int> _calcDayRange() {
-    int minDays = _minTime.difference(_baselineDate).inDays;
-    int maxDays = _maxTime.difference(_baselineDate).inDays;
+    int minDays = _minTime!.difference(_baselineDate).inDays;
+    int maxDays = _maxTime!.difference(_baselineDate).inDays;
     return [minDays, maxDays];
   }
 
@@ -470,10 +470,10 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
   List<int> _calcHourRange() {
     int minHour = 0, maxHour = 23;
     if (_currDay == _dayRange!.first) {
-      minHour = _minTime.hour;
+      minHour = _minTime!.hour;
     }
     if (_currDay == _dayRange!.last) {
-      maxHour = _maxTime.hour;
+      maxHour = _maxTime!.hour;
     }
     return [minHour, maxHour];
   }
@@ -485,13 +485,13 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
       currHour = _currHour;
     }
 
-    if (_currDay == _dayRange!.first && currHour == _minTime.hour) {
+    if (_currDay == _dayRange!.first && currHour == _minTime!.hour) {
       // selected minimum day、hour, limit minute range
-      minMinute = _minTime.minute;
+      minMinute = _minTime!.minute;
     }
-    if (_currDay == _dayRange!.last && currHour == _maxTime.hour) {
+    if (_currDay == _dayRange!.last && currHour == _maxTime!.hour) {
       // selected maximum day、hour, limit minute range
-      maxMinute = _maxTime.minute;
+      maxMinute = _maxTime!.minute;
     }
     return [minMinute, maxMinute];
   }
@@ -508,16 +508,16 @@ class _DateTimePickerWidgetState extends State<DateTimePickerWidget> {
     }
 
     if (_currDay == _dayRange!.first &&
-        currHour == _minTime.hour &&
-        currMinute == _minTime.minute) {
+        currHour == _minTime!.hour &&
+        currMinute == _minTime!.minute) {
       // selected minimum hour and minute, limit second range
-      minSecond = _minTime.second;
+      minSecond = _minTime!.second;
     }
     if (_currDay == _dayRange!.last &&
-        currHour == _maxTime.hour &&
-        currMinute == _maxTime.minute) {
+        currHour == _maxTime!.hour &&
+        currMinute == _maxTime!.minute) {
       // selected maximum hour and minute, limit second range
-      maxSecond = _maxTime.second;
+      maxSecond = _maxTime!.second;
     }
     return [minSecond, maxSecond];
   }

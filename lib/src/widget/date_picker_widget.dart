@@ -50,10 +50,12 @@ class DatePickerWidget extends StatefulWidget {
 }
 
 class _DatePickerWidgetState extends State<DatePickerWidget> {
-  DateTime _minDateTime, _maxDateTime;
+  DateTime? _minDateTime, _maxDateTime;
   int? _currYear, _currMonth, _currDay;
   List<int>? _yearRange, _monthRange, _dayRange;
-  FixedExtentScrollController? _yearScrollCtrl, _monthScrollCtrl, _dayScrollCtrl;
+  FixedExtentScrollController? _yearScrollCtrl,
+      _monthScrollCtrl,
+      _dayScrollCtrl;
 
   late Map<String, FixedExtentScrollController?> _scrollCtrlMap;
   late Map<String, List<int>?> _valueRangeMap;
@@ -74,19 +76,21 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
     // limit the range of year
     this._yearRange = _calcYearRange();
-    this._currYear = min(max(_minDateTime.year, _currYear!), _maxDateTime.year);
+    this._currYear =
+        min(max(_minDateTime!.year, _currYear!), _maxDateTime!.year);
 
     // limit the range of month
     this._monthRange = _calcMonthRange();
-    this._currMonth = min(max(_monthRange!.first, _currMonth!), _monthRange!.last);
+    this._currMonth =
+        min(max(_monthRange!.first, _currMonth!), _monthRange!.last);
 
     // limit the range of day
     this._dayRange = _calcDayRange();
     this._currDay = min(max(_dayRange!.first, _currDay!), _dayRange!.last);
 
     // create scroll controller
-    _yearScrollCtrl =
-        FixedExtentScrollController(initialItem: _currYear! - _yearRange!.first);
+    _yearScrollCtrl = FixedExtentScrollController(
+        initialItem: _currYear! - _yearRange!.first);
     _monthScrollCtrl = FixedExtentScrollController(
         initialItem: _currMonth! - _monthRange!.first);
     _dayScrollCtrl =
@@ -174,7 +178,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   /// render the picker widget of year、month and day
   Widget _renderDatePickerWidget() {
-    List<Widget> pickers = List<Widget>();
+    List<Widget> pickers = List<Widget>.empty();
     List<String> formatArr =
         DateTimeFormatter.splitDateFormat(widget.dateFormat);
     formatArr.forEach((format) {
@@ -231,8 +235,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       alignment: Alignment.center,
       child: Text(
         DateTimeFormatter.formatDateTime(value, format, widget.locale),
-        style:
-            widget.pickerTheme!.itemTextStyle ?? DATETIME_PICKER_ITEM_TEXT_STYLE,
+        style: widget.pickerTheme?.itemTextStyle ??
+            DATETIME_PICKER_ITEM_TEXT_STYLE,
       ),
     );
   }
@@ -287,7 +291,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     if (dayRangeChanged) {
       // day range changed, need limit the value of selected day
       if (!widget.onMonthChangeStartWithFirstDate) {
-        max(min(_currDay, dayRange.last), dayRange.first);
+        max(min(_currDay!, dayRange.last), dayRange.first);
       } else {
         _currDay = dayRange.first;
       }
@@ -339,7 +343,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   /// calculate selected index list
   List<int> _calcSelectIndexList() {
-    int yearIndex = _currYear! - _minDateTime.year;
+    int yearIndex = _currYear! - _minDateTime!.year;
     int monthIndex = _currMonth! - _monthRange!.first;
     int dayIndex = _currDay! - _dayRange!.first;
     return [yearIndex, monthIndex, dayIndex];
@@ -347,22 +351,22 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   /// calculate the range of year
   List<int> _calcYearRange() {
-    print(_minDateTime.year.toString() + ", " + _maxDateTime.year.toString());
-    return [_minDateTime.year, _maxDateTime.year];
+    print(_minDateTime!.year.toString() + ", " + _maxDateTime!.year.toString());
+    return [_minDateTime!.year, _maxDateTime!.year];
   }
 
   /// calculate the range of month
   List<int> _calcMonthRange() {
     int minMonth = 1, maxMonth = 12;
-    int minYear = _minDateTime.year;
-    int maxYear = _maxDateTime.year;
+    int minYear = _minDateTime!.year;
+    int maxYear = _maxDateTime!.year;
     if (minYear == _currYear) {
       // selected minimum year, limit month range
-      minMonth = _minDateTime.month;
+      minMonth = _minDateTime!.month;
     }
     if (maxYear == _currYear) {
       // selected maximum year, limit month range
-      maxMonth = _maxDateTime.month;
+      maxMonth = _maxDateTime!.month;
     }
     return [minMonth, maxMonth];
   }
@@ -370,20 +374,20 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   /// calculate the range of day
   List<int> _calcDayRange({currMonth}) {
     int minDay = 1, maxDay = _calcDayCountOfMonth();
-    int minYear = _minDateTime.year;
-    int maxYear = _maxDateTime.year;
-    int minMonth = _minDateTime.month;
-    int maxMonth = _maxDateTime.month;
+    int minYear = _minDateTime!.year;
+    int maxYear = _maxDateTime!.year;
+    int minMonth = _minDateTime!.month;
+    int maxMonth = _maxDateTime!.month;
     if (currMonth == null) {
       currMonth = _currMonth;
     }
     if (minYear == _currYear && minMonth == currMonth) {
       // selected minimum year and month, limit day range
-      minDay = _minDateTime.day;
+      minDay = _minDateTime!.day;
     }
     if (maxYear == _currYear && maxMonth == currMonth) {
       // selected maximum year and month, limit day range
-      maxDay = _maxDateTime.day;
+      maxDay = _maxDateTime!.day;
     }
     return [minDay, maxDay];
   }

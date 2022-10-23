@@ -49,7 +49,7 @@ class TimePickerWidget extends StatefulWidget {
 }
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
-  DateTime _minTime, _maxTime;
+  DateTime? _minTime, _maxTime;
   int? _currHour, _currMinute, _currSecond;
   int? _minuteDivider;
   List<int>? _hourRange, _minuteRange, _secondRange;
@@ -62,8 +62,8 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
 
   bool _isChangeTimeRange = false;
 
-  _TimePickerWidgetState(DateTime? minTime, DateTime? maxTime, DateTime? initTime,
-      int? minuteDivider) {
+  _TimePickerWidgetState(DateTime? minTime, DateTime? maxTime,
+      DateTime? initTime, int? minuteDivider) {
     if (minTime == null) {
       minTime = DateTime.parse(DATE_PICKER_MIN_DATETIME);
     }
@@ -97,8 +97,8 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
         min(max(_secondRange!.first, _currSecond!), _secondRange!.last);
 
     // create scroll controller
-    _hourScrollCtrl =
-        FixedExtentScrollController(initialItem: _currHour! - _hourRange!.first);
+    _hourScrollCtrl = FixedExtentScrollController(
+        initialItem: _currHour! - _hourRange!.first);
     _minuteScrollCtrl = FixedExtentScrollController(
         initialItem: (_currMinute! - _minuteRange!.first) ~/ _minuteDivider!);
     _secondScrollCtrl = FixedExtentScrollController(
@@ -190,7 +190,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
 
   /// render the picker widget of year、month and day
   Widget _renderDatePickerWidget() {
-    List<Widget> pickers = List<Widget>();
+    List<Widget> pickers = List<Widget>.empty();
     List<String> formatArr =
         DateTimeFormatter.splitDateFormat(widget.dateFormat);
     formatArr.forEach((format) {
@@ -267,8 +267,8 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
       alignment: Alignment.center,
       child: Text(
         DateTimeFormatter.formatDateTime(value, format, widget.locale),
-        style:
-            widget.pickerTheme!.itemTextStyle ?? DATETIME_PICKER_ITEM_TEXT_STYLE,
+        style: widget.pickerTheme?.itemTextStyle ??
+            DATETIME_PICKER_ITEM_TEXT_STYLE,
       ),
     );
   }
@@ -336,8 +336,8 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
     if (minuteRangeChanged) {
       // CupertinoPicker refresh data not working (https://github.com/flutter/flutter/issues/22999)
       int currMinute = _currMinute!;
-      _minuteScrollCtrl!
-          .jumpToItem((minuteRange.last - minuteRange.first) ~/ _minuteDivider!);
+      _minuteScrollCtrl!.jumpToItem(
+          (minuteRange.last - minuteRange.first) ~/ _minuteDivider!);
       if (currMinute < minuteRange.last) {
         _minuteScrollCtrl!.jumpToItem(currMinute - minuteRange.first);
       }
@@ -365,25 +365,25 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
 
   /// calculate the range of hour
   List<int> _calcHourRange() {
-    return [_minTime.hour, _maxTime.hour];
+    return [_minTime!.hour, _maxTime!.hour];
   }
 
   /// calculate the range of minute
   List<int> _calcMinuteRange({currHour}) {
     int minMinute = 0, maxMinute = 59;
-    int minHour = _minTime.hour;
-    int maxHour = _maxTime.hour;
+    int minHour = _minTime!.hour;
+    int maxHour = _maxTime!.hour;
     if (currHour == null) {
       currHour = _currHour;
     }
 
     if (minHour == currHour) {
       // selected minimum hour, limit minute range
-      minMinute = _minTime.minute;
+      minMinute = _minTime!.minute;
     }
     if (maxHour == currHour) {
       // selected maximum hour, limit minute range
-      maxMinute = _maxTime.minute;
+      maxMinute = _maxTime!.minute;
     }
     return [minMinute, maxMinute];
   }
@@ -391,10 +391,10 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
   /// calculate the range of second
   List<int> _calcSecondRange({currHour, currMinute}) {
     int minSecond = 0, maxSecond = 59;
-    int minHour = _minTime.hour;
-    int maxHour = _maxTime.hour;
-    int minMinute = _minTime.minute;
-    int maxMinute = _maxTime.minute;
+    int minHour = _minTime!.hour;
+    int maxHour = _maxTime!.hour;
+    int minMinute = _minTime!.minute;
+    int maxMinute = _maxTime!.minute;
 
     if (currHour == null) {
       currHour = _currHour;
@@ -405,11 +405,11 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
 
     if (minHour == currHour && minMinute == currMinute) {
       // selected minimum hour and minute, limit second range
-      minSecond = _minTime.second;
+      minSecond = _minTime!.second;
     }
     if (maxHour == currHour && maxMinute == currMinute) {
       // selected maximum hour and minute, limit second range
-      maxSecond = _maxTime.second;
+      maxSecond = _maxTime!.second;
     }
     return [minSecond, maxSecond];
   }
